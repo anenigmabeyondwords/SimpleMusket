@@ -5,6 +5,8 @@ import com.brokenkeyboard.simplemusket.ModRegistry;
 import com.brokenkeyboard.simplemusket.entity.goal.MusketAttackGoal;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -55,8 +57,8 @@ public class AbstractSkeletonMixin {
 
     @WrapOperation(method = "populateDefaultEquipmentSlots", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/monster/AbstractSkeleton;setItemSlot(Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/world/item/ItemStack;)V"))
-    private void changeSpawnWeapon(AbstractSkeleton skeleton, EquipmentSlot slot, ItemStack stack, Operation<Void> original) {
+    private void changeSpawnWeapon(AbstractSkeleton skeleton, EquipmentSlot slot, ItemStack stack, Operation<Void> original, @Local(argsOnly = true) RandomSource random) {
         original.call(skeleton, slot,
-                stack.is(Items.BOW) && skeleton.level().getRandom().nextDouble() < Config.SKELETON_MUSKET_SPAWN_CHANCE.getAsDouble() ? new ItemStack(ModRegistry.MUSKET) : stack);
+                stack.is(Items.BOW) && random.nextDouble() < Config.SKELETON_MUSKET_SPAWN_CHANCE.getAsDouble() ? new ItemStack(ModRegistry.MUSKET) : stack);
     }
 }
